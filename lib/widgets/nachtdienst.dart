@@ -1,14 +1,14 @@
 import 'package:dienstplan_app/helpers/monate.dart';
-import 'package:dienstplan_app/widgets/number_selector.dart';
+import 'package:dienstplan_app/widgets/anzahl_schichten.dart';
 import 'package:flutter/material.dart';
 
 class Nachtdienst extends StatefulWidget {
   static const String routeName = '/nachtdienst';
-  final String name;
+  final String name = 'Nachtdienst';
   final int currentMonth = 2;
   int selectedMonth = 2;
 
-  Nachtdienst(this.name);
+  // Nachtdienst(this.name);
 
   @override
   _NachtdienstState createState() => _NachtdienstState();
@@ -82,13 +82,41 @@ class _NachtdienstState extends State<Nachtdienst> {
               ),
             ),
             SizedBox(
-              height: constraints.maxHeight * 0.04,
+              height: constraints.maxHeight * 0.085,
             ),
-            Text('Gewünschte Anzahl von Schichten:'),
-            NumberSelector(),
-            Text('Maximale Anzahl von Schichten:'),
-            NumberSelector(),
-            Text('Verfügbare Daten:'),
+            Column(
+              children: [
+                AnzahlSchichten(constraints),
+                SizedBox(
+                  height: constraints.maxHeight * 0.018,
+                ),
+                Text(
+                  'Mögliche Daten:',
+                  style: TextStyle(fontSize: constraints.maxWidth * 0.014),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(constraints.maxHeight * 0.015),
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: constraints.maxHeight * 0.05,
+                    width: constraints.maxWidth * 0.9,
+                    child: RaisedButton(
+                      padding: EdgeInsets.symmetric(
+                          vertical: constraints.maxHeight * 0.015,
+                          horizontal: constraints.maxWidth * 0.025),
+                      child: Text('+ hinzufügen'),
+                      color: Theme.of(context).primaryColor,
+                      textColor: Colors.grey[200],
+                      onPressed: () {},
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            constraints.maxHeight * 0.025),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

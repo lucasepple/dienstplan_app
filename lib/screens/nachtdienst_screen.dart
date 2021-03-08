@@ -10,7 +10,7 @@ class NachtdienstScreen extends StatelessWidget {
     final name = ModalRoute.of(context).settings.arguments as String;
     return CustomScaffold(
       title: name,
-      child: Nachtdienst(name),
+      child: Nachtdienst(),
     );
   }
 }
