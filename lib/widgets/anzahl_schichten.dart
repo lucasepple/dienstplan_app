@@ -1,19 +1,18 @@
+import 'package:dienstplan_app/providers/nachtdienste.dart';
+import 'package:dienstplan_app/providers/personal.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class AnzahlSchichten extends StatefulWidget {
+class AnzahlSchichten extends StatelessWidget {
   final BoxConstraints constraints;
+  final Personal personal;
+  final int index;
 
-  AnzahlSchichten(this.constraints);
+  AnzahlSchichten(this.constraints, this.personal, this.index);
 
-  @override
-  _AnzahlSchichtenState createState() => _AnzahlSchichtenState();
-}
-
-class _AnzahlSchichtenState extends State<AnzahlSchichten> {
-  int _wishValue = 0;
-  int _maxValue = 0;
-
-  Widget _numberSelector(double size, [bool max = false]) {
+  Widget numberSelector(BuildContext context, double size, [bool max = false]) {
+    final int wishValue = personal.schichtenWunsh[index];
+    final int maxValue = personal.schichtenMax[index];
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -23,30 +22,28 @@ class _AnzahlSchichtenState extends State<AnzahlSchichten> {
             size: size * 1.2,
           ),
           onPressed: max
-              ? _maxValue == 0
+              ? maxValue == 0
                   ? null
                   : () {
-                      setState(() {
-                        if (_maxValue == _wishValue) {
-                          _maxValue--;
-                          _wishValue--;
-                        } else {
-                          _maxValue--;
-                        }
-                      });
+                      if (maxValue == wishValue) {
+                        Provider.of<Nachtdienste>(context, listen: false)
+                            .minusBeide(personal.name, index);
+                      } else {
+                        Provider.of<Nachtdienste>(context, listen: false)
+                            .minusMax(personal.name, index);
+                      }
                     }
-              : _wishValue == 0
+              : wishValue == 0
                   ? null
                   : () {
-                      setState(() {
-                        _wishValue--;
-                      });
+                      Provider.of<Nachtdienste>(context, listen: false)
+                          .minusWunsch(personal.name, index);
                     },
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: size * 0.45),
           child: Text(
-            max ? '$_maxValue' : '$_wishValue',
+            max ? '$maxValue' : '$wishValue',
             style: TextStyle(fontSize: size),
           ),
         ),
@@ -56,20 +53,18 @@ class _AnzahlSchichtenState extends State<AnzahlSchichten> {
             size: size * 1.2,
           ),
           onPressed: () {
-            setState(
-              () {
-                if (max) {
-                  _maxValue++;
-                } else {
-                  if (_wishValue == _maxValue) {
-                    _wishValue++;
-                    _maxValue++;
-                  } else {
-                    _wishValue++;
-                  }
-                }
-              },
-            );
+            if (max) {
+              Provider.of<Nachtdienste>(context, listen: false)
+                  .plusMax(personal.name, index);
+            } else {
+              if (wishValue == maxValue) {
+                Provider.of<Nachtdienste>(context, listen: false)
+                    .plusBeide(personal.name, index);
+              } else {
+                Provider.of<Nachtdienste>(context, listen: false)
+                    .plusWunsch(personal.name, index);
+              }
+            }
           },
         ),
       ],
@@ -83,25 +78,25 @@ class _AnzahlSchichtenState extends State<AnzahlSchichten> {
         Text(
           'Gewünschte Anzahl von Schichten:',
           style: TextStyle(
-            fontSize: widget.constraints.maxWidth * 0.014,
+            fontSize: constraints.maxWidth * 0.014,
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(widget.constraints.maxHeight * 0.015),
-          child: _numberSelector(widget.constraints.maxWidth * 0.0185),
+          padding: EdgeInsets.all(constraints.maxHeight * 0.015),
+          child: numberSelector(context, constraints.maxWidth * 0.0185),
         ),
         SizedBox(
-          height: widget.constraints.maxHeight * 0.018,
+          height: constraints.maxHeight * 0.018,
         ),
         Text(
           'Maximale Anzahl von Schichten:',
           style: TextStyle(
-            fontSize: widget.constraints.maxWidth * 0.014,
+            fontSize: constraints.maxWidth * 0.014,
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(widget.constraints.maxHeight * 0.015),
-          child: _numberSelector(widget.constraints.maxWidth * 0.0185, true),
+          padding: EdgeInsets.all(constraints.maxHeight * 0.015),
+          child: numberSelector(context, constraints.maxWidth * 0.0185, true),
         ),
       ],
     );

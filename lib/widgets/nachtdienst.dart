@@ -1,14 +1,15 @@
 import 'package:dienstplan_app/helpers/monate.dart';
+import 'package:dienstplan_app/providers/nachtdienste.dart';
+import 'package:dienstplan_app/providers/personal.dart';
 import 'package:dienstplan_app/widgets/anzahl_schichten.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Nachtdienst extends StatefulWidget {
   static const String routeName = '/nachtdienst';
-  final String name = 'Nachtdienst';
+  // final String name = 'Nachtdienst';
   final int currentMonth = 2;
   int selectedMonth = 2;
-
-  // Nachtdienst(this.name);
 
   @override
   _NachtdienstState createState() => _NachtdienstState();
@@ -17,7 +18,7 @@ class Nachtdienst extends StatefulWidget {
 class _NachtdienstState extends State<Nachtdienst> {
   List<Widget> _monthList(BuildContext context, BoxConstraints constraints) {
     List<Widget> list = [];
-    for (int i = widget.currentMonth; i < widget.currentMonth + 4; i++) {
+    for (int i = widget.currentMonth; i < widget.currentMonth + 3; i++) {
       list.add(
         Container(
           // margin: EdgeInsets.symmetric(
@@ -54,6 +55,8 @@ class _NachtdienstState extends State<Nachtdienst> {
 
   @override
   Widget build(BuildContext context) {
+    final String name = ModalRoute.of(context).settings.arguments;
+    final personal = Provider.of<Nachtdienste>(context).findByName(name);
     return LayoutBuilder(
       builder: (context, constraints) => Container(
         padding: EdgeInsets.symmetric(
@@ -64,9 +67,9 @@ class _NachtdienstState extends State<Nachtdienst> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.name,
+              personal.name,
               style: TextStyle(
-                fontSize: constraints.maxWidth * 0.0225,
+                fontSize: constraints.maxWidth * 0.019,
                 color: Theme.of(context).primaryColor,
               ),
             ),
@@ -86,7 +89,11 @@ class _NachtdienstState extends State<Nachtdienst> {
             ),
             Column(
               children: [
-                AnzahlSchichten(constraints),
+                AnzahlSchichten(
+                  constraints,
+                  personal,
+                  widget.selectedMonth - widget.currentMonth,
+                ),
                 SizedBox(
                   height: constraints.maxHeight * 0.018,
                 ),
